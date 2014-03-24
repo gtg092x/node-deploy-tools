@@ -1,0 +1,23 @@
+SRC_PATH=src/${APP_ID}
+BASE_PATH=../..
+MODE=prod
+if [ "$1" == "stag" ] ; then
+  	echo "Staging"
+	MODE="stag"
+fi
+cd $SRC_PATH
+git pull
+npm install --cache
+
+
+cd $BASE_PATH
+rm -rf $MODE
+mkdir $MODE
+mkdir $MODE/.tmp
+chmod 777 $MODE/.tmp
+cp -r $SRC_PATH $MODE
+cp -R local/. $MODE
+service node/${APP_ID} stop
+service node/${APP_ID} start
+#service node/${APP_ID}_${MODE} stop
+#service node/${APP_ID}_${MODE} start

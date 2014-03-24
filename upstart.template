@@ -1,0 +1,29 @@
+env PORT=8000
+env APP_ID=$APP_ID_
+env APP_DIR=/var/node/${APP_ID}/prod
+env NODE_ENV=prod
+env MODE=prod
+
+description "${APP_ID} node app"
+author	    "matthew drake"
+
+start on startup
+stop on shutdown
+
+respawn
+respawn limit 99 5
+
+script
+	export HOME="/root"
+	chdir $APP_DIR
+	exec node app.js --prod >> /var/node/$APP_ID/log/$MODE.sys.log 2>&1
+end script
+
+pre-start script
+#	exec sails www || true
+	echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/node/$APP_ID/log/$MODE.sys.log
+end script
+
+pre-stop script
+    	echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/node/$APP_ID/log/$MODE.sys.log
+end script
